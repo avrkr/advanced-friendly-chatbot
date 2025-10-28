@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Request logging middleware
@@ -26,8 +26,8 @@ app.use('/api/chat', chatRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     memory: process.memoryUsage()
@@ -42,16 +42,12 @@ app.get('/', (req, res) => {
 // MongoDB connection with retry logic
 const connectWithRetry = async (retries = 5, delay = 5000) => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB successfully');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
-    
     if (retries > 0) {
-      console.log(`Retrying connection in ${delay/1000} seconds... (${retries} retries left)`);
+      console.log(`Retrying connection in ${delay / 1000} seconds... (${retries} retries left)`);
       setTimeout(() => connectWithRetry(retries - 1, delay), delay);
     } else {
       console.error('❌ Failed to connect to MongoDB after multiple attempts');
@@ -63,7 +59,7 @@ const connectWithRetry = async (retries = 5, delay = 5000) => {
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Something went wrong!',
     details: process.env.NODE_ENV === 'development' ? error.message : undefined
   });
@@ -71,22 +67,22 @@ app.use((error, req, res, next) => {
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     error: 'Endpoint not found',
-    path: req.originalUrl 
+    path: req.originalUrl
   });
 });
 
 // Start server
 const startServer = async () => {
   await connectWithRetry();
-  
-  app.listen(PORT, () => {
+
+  const server = app.listen(PORT, () => {
     console.log(`
 🚀 Advanced Friendly Chatbot Server Started!
 📍 Port: ${PORT}
 🌍 Environment: ${process.env.NODE_ENV || 'development'}
-📊 MongoDB: ${process.env.MONGODB_URI}
+📊 MongoDB: ${process.env.MONGODB_URI ? 'Configured' : 'Not configured'}
 🔗 API: http://localhost:${PORT}/api
 💻 Frontend: http://localhost:${PORT}
 
@@ -102,24 +98,29 @@ const startServer = async () => {
 Ready to chat! 🤖✨
     `);
   });
+
+  // Graceful shutdown
+  const shutdown = async (signal) => {
+    console.log(`\n🛑 ${signal} received, shutting down gracefully...`);
+    server.close(async () => {
+      await mongoose.connection.close();
+      console.log('✅ MongoDB connection closed');
+      process.exit(0);
+    });
+  };
+
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+  return server;
 };
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down server gracefully...');
-  await mongoose.connection.close();
-  console.log('✅ MongoDB connection closed');
-  process.exit(0);
-});
+// Only start server if not required by tests
+if (require.main === module) {
+  startServer().catch((error) => {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  });
+}
 
-process.on('SIGTERM', async () => {
-  console.log('\n🛑 Server termination signal received...');
-  await mongoose.connection.close();
-  console.log('✅ MongoDB connection closed');
-  process.exit(0);
-});
-
-startServer().catch(error => {
-  console.error('❌ Failed to start server:', error);
-  process.exit(1);
-});
+module.exports = app;
