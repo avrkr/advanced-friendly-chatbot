@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Friendly Chatbot - Your AI Friend</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🤖 Your Advanced AI Friend</h1>
+            <p>Customizable, empathetic, and always here for you! 💫</p>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <span class="control-label">Bot Name:</span>
+                <input type="text" id="botNameInput" class="control-input" placeholder="Enter bot name" maxlength="30">
+            </div>
+            
+            <div class="control-group">
+                <span class="control-label">Style:</span>
+                <select id="styleSelect" class="control-select">
+                    <option value="friendly">Friendly 🤗</option>
+                    <option value="professional">Professional 💼</option>
+                    <option value="funny">Funny 😄</option>
+                    <option value="supportive">Supportive 🌟</option>
+                    <option value="enthusiastic">Enthusiastic 🎉</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button id="settingsButton" class="btn btn-primary">⚙️ Settings</button>
+                <button id="statsButton" class="btn btn-success">📊 Stats</button>
+                <button id="clearChatButton" class="btn btn-danger">🗑️ Clear Chat</button>
+            </div>
+        </div>
+        
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-message">
+                <h3>Welcome to Your Advanced AI Friend! 🎉</h3>
+                <p>I'm here to chat with you like a real friend. You can customize my name, personality, and conversation style using the controls above!</p>
+                <p>What would you like to talk about today? 😊</p>
+            </div>
+        </div>
+        
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator">
+            <span>Thinking</span>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+        
+        <!-- Input Container -->
+        <div class="input-container">
+            <textarea id="messageInput" placeholder="Type your message here... 💬 (Press Enter to send, Shift+Enter for new line)" rows="1"></textarea>
+            <button id="sendButton">Send 🚀</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🤖 Chatbot Settings</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label class="form-label" for="botName">Bot Name</label>
+                    <input type="text" id="botName" name="botName" class="form-input" placeholder="Enter your bot's name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="conversationStyle">Conversation Style</label>
+                    <select id="conversationStyle" name="conversationStyle" class="form-select">
+                        <option value="friendly">Friendly 🤗</option>
+                        <option value="professional">Professional 💼</option>
+                        <option value="funny">Funny 😄</option>
+                        <option value="supportive">Supportive 🌟</option>
+                        <option value="enthusiastic">Enthusiastic 🎉</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Personality Traits</label>
+                    <div class="personality-traits" id="personalityTraits">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="userName">Your Name (Optional)</label>
+                    <input type="text" id="userName" name="userName" class="form-input" placeholder="What should I call you?">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="userInterests">Your Interests (Optional)</label>
+                    <input type="text" id="userInterests" name="userInterests" class="form-input" placeholder="e.g., music, technology, sports">
+                    <small>Separate multiple interests with commas</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Preferences</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="useEmojis" checked class="checkbox-input">
+                            Use emojis in responses 😊
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="askQuestions" checked class="checkbox-input">
+                            Ask follow-up questions ❓
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="shareFacts" class="checkbox-input">
+                            Share interesting facts 📚
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="memoryEnabled" checked class="checkbox-input">
+                            Remember conversation context 🧠
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">💾 Save Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div class="modal" id="statsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📊 Chat Statistics</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="statsContent">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
